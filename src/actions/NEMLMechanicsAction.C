@@ -40,7 +40,7 @@ validParams<NEMLMechanicsAction>()
   return params;
 }
 
-NEMLMechanicsAction::NEMLMechanicsAction(const InputParameters & params) : 
+NEMLMechanicsAction::NEMLMechanicsAction(const InputParameters & params) :
     Action(params),
     _displacements(getParam<std::vector<VariableName>>("displacements")),
     _ndisp(_displacements.size()),
@@ -51,7 +51,7 @@ NEMLMechanicsAction::NEMLMechanicsAction(const InputParameters & params) :
 
 }
 
-void 
+void
 NEMLMechanicsAction::act()
 {
   if (_current_task == "add_variable")
@@ -88,7 +88,7 @@ NEMLMechanicsAction::act()
       params.set<NonlinearVariableName>("variable") = _displacements[i];
       params.set<unsigned int>("component") = i;
       params.set<bool>("use_displaced_mesh") = _kin_mapper[_kinematics];
-      
+
       std::string name = "SD_" + Moose::stringify(i);
 
       _problem->addKernel("StressDivergenceNEML", name, params);
@@ -120,7 +120,7 @@ NEMLMechanicsAction::_add_tensor_variable(std::string name)
 void
 NEMLMechanicsAction::_add_scalar_variable(std::string name)
 {
-  _problem->addAuxVariable(name, 
+  _problem->addAuxVariable(name,
                            FEType(Utility::string_to_enum<Order>("CONSTANT"),
                                   Utility::string_to_enum<FEFamily>("MONOMIAL")),
                            nullptr);
