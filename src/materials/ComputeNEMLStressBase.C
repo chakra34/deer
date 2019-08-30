@@ -11,11 +11,7 @@ validParams<ComputeNEMLStressBase>()
   params.addCoupledVar("temperature", 0.0, "Coupled temperature");
 
   params.addParam<bool>("large_kinematics", false, "Use large displacement kinematics");
-  params.addParam<bool>("crystal_plasticity", false, "Use crystal plasticity material models");
   params.suppressParameter<bool>("use_displaced_mesh");
-  params.addParam<UserObjectName>("euler_angle_provider","dummy"
-                                        "Name of Euelr angle provider user object");
-  params.addParam<unsigned int>("grain_id", 0,"ID of the grain for this material");
   return params;
 }
 
@@ -42,22 +38,10 @@ ComputeNEMLStressBase::ComputeNEMLStressBase(const InputParameters & parameters)
     _dissipation_old(getMaterialPropertyOld<Real>("dissipation")),
     _elastic_strain(declareProperty<RankTwoTensor>("elastic_strain")),
     _inelastic_strain(declareProperty<RankTwoTensor>("inelastic_strain")),
-    _ld(getParam<bool>("large_kinematics")),
-    _cp(getParam<bool>("crystal_plasticity")),
-    _euler(parameters.isParamSetByUser("euler_angle_provider") ? &getUserObject<EulerAngleProvider>("euler_angle_provider") : nullptr),
-    _grain(getParam<unsigned int>("grain_id"))
+    _ld(getParam<bool>("large_kinematics"))
 {
   // I strongly hesitate to put this here, may change later
   _model = neml::parse_xml_unique(_fname, _mname);
-  _cpmodel = static_cast<neml::SingleCrystalModel *>(_model.get());
-
-  if((_cp == true) && (!parameters.isParamSetByUser("grain_id"))){
-    mooseWarning("grain id's not provided, block id will be used for the cp");
-    _given = 0;
-  }
-  if((_cp == true) && (_euler == nullptr) ) {
-    mooseWarning("no euler angle file is given for a CP model default orientation will be used");
-  }
 }
 
 void ComputeNEMLStressBase::computeQpProperties()
@@ -113,10 +97,6 @@ void ComputeNEMLStressBase::computeQpProperties()
                s_np1, s_n, h_np1, h_n, A_np1, B_np1, u_np1, u_n,
                p_np1, p_n);
 
-  // // Requesting cp output
-  getCPOutput(e_np1, e_n, w_np1, w_n, T_np1, T_n, t_np1, t_n,
-               s_np1, s_n, h_np1, h_n, A_np1, B_np1, u_np1, u_n,
-               p_np1, p_n);
 
   // Do more translation, now back to tensors
   neml_tensor(s_np1, _stress[_qp]);
@@ -168,17 +148,6 @@ void ComputeNEMLStressBase::initQpStatefulProperties()
     mooseError("Error initializing NEML history!");
   }
 
-  if (_euler != nullptr) {
-      EulerAngles angles;
-      // auto grains = _euler.getGrainNum(); // total grains
-      if (_given == 0){
-        _grain = std::max(0,_current_elem->subdomain_id() - 1);
-      }
-      angles = _euler->getEulerAngles(_grain); // current orientation
-      neml:: Orientation e = neml::Orientation::createEulerAngles(angles.phi1, angles.Phi, angles.phi2,"degrees");
-      // Various other junk
-      _cpmodel->set_active_orientation(&_hist[_qp].front(),e);
-  }
   _energy[_qp] = 0.0;
   _dissipation[_qp] = 0.0;
 }
