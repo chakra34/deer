@@ -1,68 +1,56 @@
-#include "ComputeNEMLCPOutput.h"
+#include "ComputeNEMLCPGrainGrowthOutput.h"
 
-registerMooseObject("DeerApp", ComputeNEMLCPOutput);
+registerMooseObject("DeerApp", ComputeNEMLCPGrainGrowthOutput);
 
 template <>
 InputParameters
-validParams<ComputeNEMLCPOutput>()
+validParams<ComputeNEMLCPGrainGrowthOutput>()
 {
   InputParameters params = validParams<ComputeNEMLStressUpdate>();
-  params.addParam<bool>("add_cp_output", false, "Give CP output");
-  params.addParam<bool>("crystal_plasticity", false, "Use crystal plasticity material models");
   params.addParam<UserObjectName>("euler_angle_provider","dummy"
                                         "Name of Euelr angle provider user object");
-  params.addParam<unsigned int>("grain_id", 0,"ID of the grain for this material");
+  params.addRequiredCoupledVar("unique_grains", "unique grains");
   return params;
 }
 
-ComputeNEMLCPOutput::ComputeNEMLCPOutput(const InputParameters & parameters)
+ComputeNEMLCPGrainGrowthOutput::ComputeNEMLCPGrainGrowthOutput(const InputParameters & parameters)
    : ComputeNEMLStressUpdate(parameters),
     _orientation_q(declareProperty<std::vector<Real>>("orientation_q")),
     _dislocation_density(declareProperty<Real>("dislocation_density")),
     _euler(parameters.isParamSetByUser("euler_angle_provider") ? &getUserObject<EulerAngleProvider>("euler_angle_provider") : nullptr), // May be making it a required parameter
-    _grain(getParam<unsigned int>("grain_id"))
+    // _grain_id(getMaterialPropertyByName<Real>("unique_grains")),
+    _grain_id(coupledValue("unique_grains")),
+    _changed_grain(declareProperty<Real>("changed_grain")),
+    _history(declareProperty<Real>("history"))
 {
   _cpmodel = static_cast<neml::SingleCrystalModel *>(_model.get());
-  if(!parameters.isParamSetByUser("grain_id")){
-   mooseWarning("grain id's not provided, block id will be used for the cp");
-   _given = 0;
-  }
-
- if(_euler == nullptr ) {
-   mooseWarning("no euler angle file is given for a single default orientation will be used !!!!");
-  }
-
  }
 
 // Assigning Euler angles from file
 void
-ComputeNEMLCPOutput::initQpStatefulProperties()
+ComputeNEMLCPGrainGrowthOutput::initQpStatefulProperties()
 {
   ComputeNEMLStressBase::initQpStatefulProperties();
-
+  _history[_qp] = 0.0;
   if (_euler != nullptr) {
       EulerAngles angles;
       // auto grains = _euler.getGrainNum(); // total grains
-      if (_given == 0){
-        unsigned int grain = std::max(0,_current_elem->subdomain_id() - 1);
-        angles = _euler->getEulerAngles(grain);
-      }
-      else{
+       _grain = std::max(0,_current_elem->subdomain_id() - 1);
+       _changed_grain[_qp] = 0.0;
         angles = _euler->getEulerAngles(_grain); // current orientation
-      }
-      neml:: Orientation e = neml::Orientation::createEulerAngles(angles.phi1, angles.Phi, angles.phi2,"degrees");
-      _cpmodel->set_active_orientation(&_hist[_qp].front(),e);
+        neml:: Orientation e = neml::Orientation::createEulerAngles(angles.phi1, angles.Phi, angles.phi2,"degrees");
+       _cpmodel->set_active_orientation(&_hist[_qp].front(),e);
 
-      // _orientation_q[_qp].resize(4);
-      // for (unsigned int i = 0; i < 4; i++){
-      //   _orientation_q[_qp][i] = e.quat()[i];   // assigning quaternion
-      //   }
+       _orientation_q[_qp].resize(4);
+         for (unsigned int i = 0; i < 4; i++){
+           _orientation_q[_qp][i] = e.quat()[i];   // assigning quaternion
+         }
   }
   _dislocation_density[_qp] = 0.0;
 }
 
 void
-ComputeNEMLCPOutput::stressUpdate(
+ComputeNEMLCPGrainGrowthOutput::stressUpdate(
       const double * const e_np1, const double * const e_n,
       const double * const w_np1, const double * const w_n,
       double T_np1, double T_n, double t_np1, double t_n,
@@ -71,16 +59,36 @@ ComputeNEMLCPOutput::stressUpdate(
       double * const A_np1, double * const B_np1,
       double & u_np1, double u_n, double & p_np1, double p_n)
 {
+
   ComputeNEMLStressUpdate::stressUpdate(e_np1, e_n, w_np1, w_n, T_np1, T_n, t_np1, t_n,
                s_np1, s_n, h_np1, h_n, A_np1, B_np1, u_np1, u_n,
                p_np1, p_n);
 
-  getCPOutput(h_np1); // passing the history for outputs
+     if (_t > 0.0){
+       EulerAngles angles;
+       unsigned int block_id = std::max(0,_current_elem->subdomain_id() - 1);
+       if (_grain_id[_qp] != block_id){
+           angles = _euler->getEulerAngles(_grain_id[_qp]); // changed orientation
+           neml:: Orientation e = neml::Orientation::createEulerAngles(angles.phi1, angles.Phi, angles.phi2,"degrees");
+           _cpmodel->set_active_orientation(&_hist[_qp].front(), e);
+           _changed_grain[_qp] = 1.0;
+           _hist[_qp].front()  = 0.0;
+           _history[_qp]       = _hist[_qp].front();
+           // Moose::out<<"Current unique_grain id "<<_grain_id[_qp]<<"\n";
+           // Moose::out<<"Orientation "<<angles.phi1<<" "<<angles.Phi<<" "<<angles.phi2<<"\n";
+         }
+         else{
+            _changed_grain[_qp] = 0.0;
+            _history[_qp] = _hist[_qp].front();
+          }
+          getCPOutput(h_np1); // passing the history for outputs
+         }
+   // Moose::out<<"Comparing histories "<<*h_np1<<" hist qp"<<_history[_qp]<<" \n";
 }
 
 // Method to store CP output as material parameters
 void
-ComputeNEMLCPOutput::getCPOutput(double * const h_np1){
+ComputeNEMLCPGrainGrowthOutput::getCPOutput(double * const h_np1){
 
   _orientation_q[_qp].resize(4);
   neml::Orientation Q = _cpmodel->get_active_orientation(h_np1);

@@ -1,18 +1,19 @@
-#ifndef COMPUTENEMLCPOUTPUT_H
-#define COMPUTENEMLCPOUTPUT_H
+#ifndef ComputeNEMLCPGrainGrowthOutput_H
+#define ComputeNEMLCPGrainGrowthOutput_H
 
 #include "ComputeNEMLStressUpdate.h"
+#include "Material.h"
 
-class ComputeNEMLCPOutput;
+class ComputeNEMLCPGrainGrowthOutput;
 
 template <>
-InputParameters validParams<ComputeNEMLCPOutput>();
+InputParameters validParams<ComputeNEMLCPGrainGrowthOutput>();
 
-class ComputeNEMLCPOutput: public ComputeNEMLStressUpdate
+class ComputeNEMLCPGrainGrowthOutput: public ComputeNEMLStressUpdate
 {
  public:
-  ComputeNEMLCPOutput(const InputParameters & parameters);
-  virtual ~ComputeNEMLCPOutput() {};
+  ComputeNEMLCPGrainGrowthOutput(const InputParameters & parameters);
+  virtual ~ComputeNEMLCPGrainGrowthOutput() {};
 
  protected:
    neml::SingleCrystalModel *_cpmodel = nullptr;
@@ -22,10 +23,14 @@ class ComputeNEMLCPOutput: public ComputeNEMLStressUpdate
    /// object providing the Euler angles
    const EulerAngleProvider * _euler;
    /// grain id
-   unsigned int _grain;
-   unsigned int _given = 1;
+  const VariableValue & _grain_id;
+   // const MaterialProperty<Real> & _grain_id;
 
-   virtual void initQpStatefulProperties();
+   MaterialProperty<Real> & _changed_grain;
+   MaterialProperty<Real> & _history;
+   unsigned int _grain;
+
+    virtual void initQpStatefulProperties();
 
    virtual void stressUpdate(
        const double * const e_np1, const double * const e_n,
@@ -40,4 +45,4 @@ class ComputeNEMLCPOutput: public ComputeNEMLStressUpdate
 };
 
 
-#endif // COMPUTENEMLCPOUTPUT_H
+#endif // ComputeNEMLCPGrainGrowthOutput_H

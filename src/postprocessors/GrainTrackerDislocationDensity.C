@@ -48,10 +48,10 @@ GrainTrackerDislocationDensity::newGrain(unsigned int new_grain_id)
     if (_random_rotations)
       angles.random();
     else
-      mooseError("GrainTrackerElasticity has run out of grain rotation data.");
+      mooseError("GrainTrackerDislocationDensity has run out of grain rotation data.");
   }
 
-  Real dislocation = _dislocation; // * new_grain_id;
+  Real dislocation = _dislocation * new_grain_id;
 
   return dislocation;
 }
