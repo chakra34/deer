@@ -39,6 +39,7 @@ void
 ComputeNEMLCPOutput::initQpStatefulProperties()
 {
   ComputeNEMLStressBase::initQpStatefulProperties();
+  _orientation_q[_qp].resize(4);
 
   if (_euler != nullptr) {
       EulerAngles angles;
@@ -52,11 +53,16 @@ ComputeNEMLCPOutput::initQpStatefulProperties()
       }
       neml:: Orientation e = neml::Orientation::createEulerAngles(angles.phi1, angles.Phi, angles.phi2,"degrees");
       _cpmodel->set_active_orientation(&_hist[_qp].front(),e);
-
-      // _orientation_q[_qp].resize(4);
-      // for (unsigned int i = 0; i < 4; i++){
-      //   _orientation_q[_qp][i] = e.quat()[i];   // assigning quaternion
-      //   }
+      _orientation_q[_qp][0] = e.quat()[0];
+      _orientation_q[_qp][1] = e.quat()[1];
+      _orientation_q[_qp][2] = e.quat()[2];
+      _orientation_q[_qp][3] = e.quat()[3];
+  }
+  else{
+    _orientation_q[_qp][0] = 0.0;
+    _orientation_q[_qp][1] = 0.0;
+    _orientation_q[_qp][2] = 0.0;
+    _orientation_q[_qp][3] = 1.0;
   }
   _dislocation_density[_qp] = 0.0;
 }
@@ -88,7 +94,7 @@ ComputeNEMLCPOutput::getCPOutput(double * const h_np1){
        _orientation_q[_qp][i] = Q.quat()[i];   // assigning quaternion
      }
 // based on Kocks-Mecking strength = b*ksi*G*sqrt(_rho); Here as an example took G of steel 80GPa, ksi = 0.9, b=2.86A
-    double strength = (double)_cpmodel->get_current_strength(h_np1);
+    // double strength = 0.0 ; //(double)_cpmodel->get_current_strength(h_np1);
     unsigned int id = _current_elem->subdomain_id();
    _dislocation_density[_qp] = _t*id*pow(10,6); //strength * strength / (2.86*pow(10,-10) * 0.9 * 80000.0);
 }

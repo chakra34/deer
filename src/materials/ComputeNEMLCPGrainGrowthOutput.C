@@ -32,6 +32,8 @@ ComputeNEMLCPGrainGrowthOutput::initQpStatefulProperties()
 {
   ComputeNEMLStressBase::initQpStatefulProperties();
   _history[_qp] = 0.0;
+  _orientation_q[_qp].resize(4);
+
   if (_euler != nullptr) {
       EulerAngles angles;
       // auto grains = _euler.getGrainNum(); // total grains
@@ -40,12 +42,17 @@ ComputeNEMLCPGrainGrowthOutput::initQpStatefulProperties()
         angles = _euler->getEulerAngles(_grain); // current orientation
         neml:: Orientation e = neml::Orientation::createEulerAngles(angles.phi1, angles.Phi, angles.phi2,"degrees");
        _cpmodel->set_active_orientation(&_hist[_qp].front(),e);
-
-       _orientation_q[_qp].resize(4);
-         for (unsigned int i = 0; i < 4; i++){
-           _orientation_q[_qp][i] = e.quat()[i];   // assigning quaternion
-         }
+       _orientation_q[_qp][0] = e.quat()[0];
+       _orientation_q[_qp][1] = e.quat()[1];
+       _orientation_q[_qp][2] = e.quat()[2];
+       _orientation_q[_qp][3] = e.quat()[3];
   }
+   else{
+     _orientation_q[_qp][0] = 0.0;
+     _orientation_q[_qp][1] = 0.0;
+     _orientation_q[_qp][2] = 0.0;
+     _orientation_q[_qp][3] = 1.0;
+   }
   _dislocation_density[_qp] = 0.0;
 }
 
@@ -72,14 +79,12 @@ ComputeNEMLCPGrainGrowthOutput::stressUpdate(
            neml:: Orientation e = neml::Orientation::createEulerAngles(angles.phi1, angles.Phi, angles.phi2,"degrees");
            _cpmodel->set_active_orientation(&_hist[_qp].front(), e);
            _changed_grain[_qp] = 1.0;
-           _hist[_qp].front()  = 0.0;
-           _history[_qp]       = _hist[_qp].front();
-           // Moose::out<<"Current unique_grain id "<<_grain_id[_qp]<<"\n";
-           // Moose::out<<"Orientation "<<angles.phi1<<" "<<angles.Phi<<" "<<angles.phi2<<"\n";
+           _hist[_qp].back()  = 0.0;
+           _history[_qp]       = _hist[_qp].back();
          }
          else{
             _changed_grain[_qp] = 0.0;
-            _history[_qp] = _hist[_qp].front();
+            _history[_qp] = _hist[_qp].back();
           }
           getCPOutput(h_np1); // passing the history for outputs
          }
@@ -96,7 +101,7 @@ ComputeNEMLCPGrainGrowthOutput::getCPOutput(double * const h_np1){
        _orientation_q[_qp][i] = Q.quat()[i];   // assigning quaternion
      }
 // based on Kocks-Mecking strength = b*ksi*G*sqrt(_rho); Here as an example took G of steel 80GPa, ksi = 0.9, b=2.86A
-    double strength = (double)_cpmodel->get_current_strength(h_np1);
+    // double strength = 0.0 ; //(double)_cpmodel->get_current_strength(h_np1);
     unsigned int id = _current_elem->subdomain_id();
    _dislocation_density[_qp] = _t*id*pow(10,6); //strength * strength / (2.86*pow(10,-10) * 0.9 * 80000.0);
 }
