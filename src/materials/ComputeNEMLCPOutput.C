@@ -16,6 +16,7 @@ validParams<ComputeNEMLCPOutput>()
 ComputeNEMLCPOutput::ComputeNEMLCPOutput(const InputParameters & parameters)
    : ComputeNEMLStressUpdate(parameters),
     _orientation_q(declareProperty<std::vector<Real>>("orientation_q")),
+    _history(declareProperty<Real>("history")),
     _euler(parameters.isParamSetByUser("euler_angle_provider") ? &getUserObject<EulerAngleProvider>("euler_angle_provider") : nullptr), // May be making it a required parameter
     _grain(getParam<unsigned int>("grain_id"))
 {
@@ -36,6 +37,7 @@ void
 ComputeNEMLCPOutput::initQpStatefulProperties()
 {
   ComputeNEMLStressBase::initQpStatefulProperties();
+  _orientation_q[_qp].resize(4);
   if (_euler != nullptr) {
       EulerAngles angles;
       if (_given == 0){
@@ -47,7 +49,18 @@ ComputeNEMLCPOutput::initQpStatefulProperties()
       }
       neml:: Orientation e = neml::Orientation::createEulerAngles(angles.phi1, angles.Phi, angles.phi2,"degrees");
       _cpmodel->set_active_orientation(&_hist[_qp].front(),e);
+      _orientation_q[_qp][0] = e.quat()[0];
+      _orientation_q[_qp][1] = e.quat()[1];
+      _orientation_q[_qp][2] = e.quat()[2];
+      _orientation_q[_qp][3] = e.quat()[3];
   }
+  else{
+    _orientation_q[_qp][0] = 0.0;
+    _orientation_q[_qp][1] = 0.0;
+    _orientation_q[_qp][2] = 0.0;
+    _orientation_q[_qp][3] = 1.0;
+  }
+  _history[_qp] = 0.0;
 }
 
 void
@@ -77,4 +90,5 @@ ComputeNEMLCPOutput::getCPOutput(double * const h_np1){
      for (unsigned int i = 0; i < 4; i++){
        _orientation_q[_qp][i] = Q.quat()[i];   // assigning quaternion
      }
+  _history[_qp] = *h_np1;
 }

@@ -19,6 +19,7 @@ class ComputeNEMLCPOutput: public ComputeNEMLStressUpdate
    neml::SingleCrystalModel *_cpmodel = nullptr;
 
    MaterialProperty<std::vector<Real>> & _orientation_q;
+   MaterialProperty<Real> & _history;
    /// object providing the Euler angles
    const EulerAngleProvider * _euler;
    /// grain id
