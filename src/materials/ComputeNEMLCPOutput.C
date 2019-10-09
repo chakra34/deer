@@ -90,5 +90,5 @@ ComputeNEMLCPOutput::getCPOutput(double * const h_np1){
      for (unsigned int i = 0; i < 4; i++){
        _orientation_q[_qp][i] = Q.quat()[i];   // assigning quaternion
      }
-  _history[_qp] = *h_np1;
+  _history[_qp] = _hist[_qp].back();
 }
