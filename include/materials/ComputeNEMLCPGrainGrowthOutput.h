@@ -3,6 +3,7 @@
 
 #include "ComputeNEMLStressUpdate.h"
 #include "Material.h"
+#include "BlockAverageValue.h"
 
 class ComputeNEMLCPGrainGrowthOutput;
 
@@ -25,6 +26,7 @@ class ComputeNEMLCPGrainGrowthOutput: public ComputeNEMLStressUpdate
    /// grain id
   const VariableValue & _grain_id;
    // const MaterialProperty<Real> & _grain_id;
+   const BlockAverageValue & _gets_avg_ori;
 
    MaterialProperty<Real> & _changed_grain;
    MaterialProperty<Real> & _history;

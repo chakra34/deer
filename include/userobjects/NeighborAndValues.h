@@ -41,9 +41,6 @@ protected:
   // Pointer to the mesh
 //  MooseMesh *_mesh_ptr;
    unsigned int _m = 1;
-   unsigned int to_do;
-   std::map<std::tuple<unsigned int, unsigned int>, unsigned int> _to_do_misorientation;
-// third variable to check same block id for the tuple
    std::map<std::tuple<unsigned int, unsigned int>, Real> _misorientation_map;
    std::set<std::tuple<unsigned int,unsigned int>> _unique_set_of_tuples;
 
