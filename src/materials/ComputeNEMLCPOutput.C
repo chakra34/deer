@@ -77,6 +77,7 @@ ComputeNEMLCPOutput::stressUpdate(
       double * const A_np1, double * const B_np1,
       double & u_np1, double u_n, double & p_np1, double p_n)
 {
+
   ComputeNEMLStressUpdate::stressUpdate(e_np1, e_n, w_np1, w_n, T_np1, T_n, t_np1, t_n,
                s_np1, s_n, h_np1, h_n, A_np1, B_np1, u_np1, u_n,
                p_np1, p_n);

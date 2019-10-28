@@ -2,6 +2,7 @@
 #define COMPUTENEMLCPOUTPUT_H
 
 #include "ComputeNEMLStressUpdate.h"
+#include "EulerAngleProvider.h"
 
 class ComputeNEMLCPOutput;
 

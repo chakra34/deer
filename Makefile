@@ -49,6 +49,10 @@ include $(MOOSE_DIR)/modules/modules.mk
 ADDITIONAL_INCLUDES := -I/home/achakraborty/Documents/Projects/neml/src/ -I/home/achakraborty/Documents/Projects/neml/src/cp/ -I/home/achakraborty/Documents/Projects/neml/src/math
 ADDITIONAL_LIBS := -L/home/achakraborty/Documents/Projects/neml/lib/ -lneml
 
+# # linking NEML, NEML_DIR=/path/to/neml
+# ADDITIONAL_INCLUDES := -I$(NEML_DIR)/src/ -I$(NEML_DIR)/src/math
+# ADDITIONAL_LIBS 	  := -L$(NEML_DIR)/lib/ -lneml
+
 # dep apps
 APPLICATION_DIR     := $(CURDIR)
 APPLICATION_NAME    := deer
