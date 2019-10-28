@@ -30,12 +30,8 @@ void NeighborAndValues::initialSetup()
   InitializeOnce();
   if (_m == 1)
   {  // Doing this thing only once
-    // Moose::out<< "***********************************************\n";
-    // Moose::out<<"NeighborAndValues INITIALIZING\n";
-    // Moose::out<< "***********************************************\n";
     _misorientation_map.clear();
     _unique_set_of_tuples.clear();
-    _to_do_misorientation.clear();
     for (const auto & elem : _mesh.getMesh().element_ptr_range())
     {
       unsigned int current_element = elem->id();
@@ -50,23 +46,9 @@ void NeighborAndValues::initialSetup()
         _unique_set_of_tuples.insert(current_tuple);
       }
     }
-
     for (auto member : _unique_set_of_tuples)
     {
       _misorientation_map[member] = 0.0;
-
-      unsigned int element1 = std::get<0>(member);
-      unsigned int element2 = std::get<1>(member);
-      Elem *el1 = _mesh.getMesh().elem_ptr(element1);
-      unsigned int b1_ID = el1->subdomain_id();
-      Elem *el2 = _mesh.getMesh().elem_ptr(element2);
-      unsigned int b2_ID = el2->subdomain_id();
-      if (b1_ID == b2_ID){
-        _to_do_misorientation[member] = 0.0;
-      }
-      else{
-        _to_do_misorientation[member] = 1.0;
-      }
     }
   _m += 1;
   }
@@ -75,9 +57,6 @@ void NeighborAndValues::initialSetup()
 void NeighborAndValues::execute()
   {
     MakeAverage();
-    // Moose::out<< "***********************************************\n";
-    // Moose::out<<"NeighborAndValues EXECUTE\n";
-    // Moose::out<< "***********************************************\n";
     for (auto it = _misorientation_map.begin(); it != _misorientation_map.end(); ++it)
     {
       auto current_tuple = it->first;
@@ -86,20 +65,11 @@ void NeighborAndValues::execute()
       auto q1 = getElementAvgValue(element1);
       auto q2 = getElementAvgValue(element2);
 
-      // auto to_do_ptr = _to_do_misorientation.find(current_tuple);
-      // if (to_do_ptr != _to_do_misorientation.end()){
-      //   to_do = to_do_ptr->second;
-      // }
-      // else{
-      //   mooseError("cannot locate the tuple");
-      // }
-      if ((element1 == element2) || (_t != 200.0)) {
+      if (element1 == element2)  {
         Real misori = 0.0;
         it->second = misori;
       }
       else{
-        // Moose::out<<"##################################################\n";
-        // Moose::out<<"doing for ele1 "<< element1 << " and ele2 "<<element2<<"\n";
         // Real misori = Misori_neml(q1,q2);
         Real misori = Misori(q1,q2);
         it->second = misori;

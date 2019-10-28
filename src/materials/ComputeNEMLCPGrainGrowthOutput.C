@@ -10,6 +10,11 @@ validParams<ComputeNEMLCPGrainGrowthOutput>()
   params.addParam<UserObjectName>("euler_angle_provider","dummy"
                                         "Name of Euelr angle provider user object");
   params.addRequiredCoupledVar("unique_grains", "unique grains");
+  params.addParam<UserObjectName>(
+      "get_avg_orientation",
+      "The name of the UserObject that is give the "
+      "current average grain orientation");
+
   return params;
 }
 
@@ -18,8 +23,8 @@ ComputeNEMLCPGrainGrowthOutput::ComputeNEMLCPGrainGrowthOutput(const InputParame
     _orientation_q(declareProperty<std::vector<Real>>("orientation_q")),
     _dislocation_density(declareProperty<Real>("dislocation_density")),
     _euler(parameters.isParamSetByUser("euler_angle_provider") ? &getUserObject<EulerAngleProvider>("euler_angle_provider") : nullptr), // May be making it a required parameter
-    // _grain_id(getMaterialPropertyByName<Real>("unique_grains")),
     _grain_id(coupledValue("unique_grains")),
+    _gets_avg_ori(getUserObject<BlockAverageValue>("get_avg_orientation")),
     _changed_grain(declareProperty<Real>("changed_grain")),
     _history(declareProperty<Real>("history"))
 {
@@ -74,12 +79,21 @@ ComputeNEMLCPGrainGrowthOutput::stressUpdate(
      if (_t > 0.0){
        EulerAngles angles;
        unsigned int block_id = std::max(0,_current_elem->subdomain_id() - 1);
+       // Moose::out<<"In material value of _grain_id "<<_grain_id[_qp]<<"\n";
+       std::vector<Real> current_ori = {0.0, 0.0, 0.0, 0.0};
        if (_grain_id[_qp] != block_id){
-           angles = _euler->getEulerAngles(_grain_id[_qp]); // changed orientation
-           neml:: Orientation e = neml::Orientation::createEulerAngles(angles.phi1, angles.Phi, angles.phi2,"degrees");
+           unsigned int id = _grain_id[_qp] + 1;
+           current_ori = _gets_avg_ori.getBlockAvgValue(id);
+           // Moose::out<<"Averaged received "<<current_ori[0]<<" "<<current_ori[1]<<" "<<current_ori[2]<<" "<<current_ori[3]<<"\n";
+           neml:: Orientation e = neml::Orientation::Quaternion(current_ori);
+           // Moose::out<<"Averaged orientation "<<e.quat()[0]<<" "<<e.quat()[1]<<" "<<e.quat()[2]<<" "<<e.quat()[3]<<"\n";
+
+           // angles = _euler->getEulerAngles(_grain_id[_qp]); // changed orientation
+           // neml:: Orientation e = neml::Orientation::createEulerAngles(angles.phi1, angles.Phi, angles.phi2,"degrees");
+
            _cpmodel->set_active_orientation(&_hist[_qp].front(), e);
            _changed_grain[_qp] = 1.0;
-           _hist[_qp].back()  = 0.0;
+           _hist[_qp].back()   = 0.0;
            _history[_qp]       = _hist[_qp].back();
          }
          else{

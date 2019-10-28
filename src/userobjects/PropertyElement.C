@@ -49,18 +49,13 @@ void PropertyElement::execute()
 void PropertyElement::InitializeOnce() {
   // Clear map values
   if (_n == 1){  // Doing this thing only once
-    // Moose::out<< "***********************************************\n";
-    // Moose::out<<"PropertyElement INITIALIZING\n";
-    // Moose::out<< "***********************************************\n";
   _map_elem_with_neighbors.clear();
     _element_value.clear();
 
     const std::map<dof_id_type, std::vector<dof_id_type>> & node_to_elem_map = _mesh.nodeToElemMap();
     for (const auto & elem : _mesh.getMesh().element_ptr_range())
     {
-      // unsigned int p = (unsigned int)_orientation[0].size(); // getting the size of the vector
-      // std::vector<Real> dummy(p,0.0);
-      _element_value[elem->id()] = {0.0,0.0,0.0,0.0};
+      _element_value[elem->id()] = {0.0,0.0,0.0,1.0};
 
       /// based on number of nodes ///
       _set_of_neighbors.clear();
@@ -80,26 +75,18 @@ void PropertyElement::InitializeOnce() {
 
 void PropertyElement::MakeAverage()
 {
-  // Moose::out<< "***********************************************\n";
-  // Moose::out<<"PropertyElement MakeAverage in EXECUTE\n";
-  // Moose::out<< "***********************************************\n";
   std::vector<Real> vector_integral_value(_orientation[0].size(),0.0);
-  // std::vector<Real> dummy(_orientation[0].size(),0.0);
 
   for (unsigned int i = 0; i < _orientation[0].size(); i++){
     for (_qp = 0; _qp < _qrule->n_points(); _qp++){
       vector_integral_value[i] = vector_integral_value[i] + _JxW[_qp] * _coord[_qp] * _orientation[_qp][i]/_current_elem_volume;
     }
   }
-
   auto obj_ptr = _element_value.find(_current_elem->id());
   if (obj_ptr != _element_value.end()){
     obj_ptr->second = vector_integral_value;
   }
   else{
-    // Moose::out << "PropertyElement: can't find the given element\n";
-    // obj_ptr->second = dummy;
-    //
     mooseError("PropertyElement: can't find the given element");
   }
 
@@ -126,20 +113,13 @@ PropertyElement::getElementAvgValue( dof_id_type element) const
 std::set< unsigned int>
 PropertyElement::getElementNeighbor( dof_id_type element) const
 {
-  // Moose::out<< "***********************************************\n";
-  // Moose::out<< "doing for current element "<< element << "\n";
-  // Moose::out<<"In PropertyElement getElementNeighbor\n";
-  // Moose::out<< "***********************************************\n";
   auto obj_ptr = _map_elem_with_neighbors.find(element); // pointer to the key value in the map
-//  auto dummy_obj_ptr = _map_elem_with_neighbors.find(1);
 
   if (obj_ptr != _map_elem_with_neighbors.end())
   {
     return obj_ptr->second;
   }
   else{
-    // Moose::out<<"getElementNeighbor: can't find the given element\n";
-    // return dummy_obj_ptr->second;
     mooseError("getElementNeighbor: can't find the given element");
 
   }

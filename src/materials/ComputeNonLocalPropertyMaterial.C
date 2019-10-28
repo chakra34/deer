@@ -38,10 +38,6 @@ ComputeNonLocalPropertyMaterial::computeQpProperties()
   Real misori = 0.0;
   Real tempMisori = 0.0;
   unsigned int current_element = _current_elem->id();
-  // Moose::out<< "***********************************************\n";
-  // Moose::out<<"IN MATERIAL\n";
-  // Moose::out<< "doing for current element "<<current_element << "\n";
-  // Moose::out<< "***********************************************\n";
 
   std::set<dof_id_type> neighbor_list = _gets_misorientation.getElementNeighbor(current_element);
   for (const auto neighbor : neighbor_list ){
