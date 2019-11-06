@@ -22,8 +22,10 @@ protected:
 
 private:
    MaterialProperty<Real> & _misorientation;
+   MaterialProperty<Real> & _gbenergy;
 
    const NeighborAndValues & _gets_misorientation;
+   Real _ref_gb_energy;
 
 };
 

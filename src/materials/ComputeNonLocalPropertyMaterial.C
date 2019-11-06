@@ -15,6 +15,7 @@ validParams<ComputeNonLocalPropertyMaterial>()
       "gets_misorientation",
       "The name of the UserObject that is going to find the "
       "element neighbors and misOrientation");
+  params.addParam<Real>("ref_gb_energy",0.608," Reference GB energy in J/m^2");
 
   return params;
 }
@@ -24,10 +25,13 @@ ComputeNonLocalPropertyMaterial::ComputeNonLocalPropertyMaterial(const InputPara
   // Declare that this material is going to provide a Real
   // valued property named "_misorientation" that Kernels can use.
   _misorientation(declareProperty<Real>("misorientation")),
+  _gbenergy(declareProperty<Real>("GB_Energy")), // in J/m^2 ("Microstructural modeling of dynamic recrystallization using irregularcellular automata, Hodgson et al.")
   // When getting a UserObject from the input file pass the name
   // of the UserObjectName _parameter_
   // Note that getUserObject returns a _const reference_ of the type in < >
-  _gets_misorientation(getUserObject<NeighborAndValues>("gets_misorientation"))
+  _gets_misorientation(getUserObject<NeighborAndValues>("gets_misorientation")),
+  _ref_gb_energy(getParam<Real>("ref_gb_energy"))
+
   {
   }
 
@@ -52,4 +56,15 @@ ComputeNonLocalPropertyMaterial::computeQpProperties()
       misori = tempMisori;
   }
   _misorientation[_qp] = misori ;
+  if (_misorientation[_qp] > 15.0){  // HAGB
+    _gbenergy[_qp] = _ref_gb_energy;
+  }
+  else{
+     if (_misorientation[_qp] == 0.0){
+       _gbenergy[_qp] = _ref_gb_energy/10.0;
+     }
+     else{
+       _gbenergy[_qp] = _ref_gb_energy * (_misorientation[_qp]/15.0) * (1 - log(_misorientation[_qp]/15.0));
+     }
+  }
 }
