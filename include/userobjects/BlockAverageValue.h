@@ -29,8 +29,6 @@ public:
    * That is because the UserObject system returns const references to objects
    * trying to use UserObjects.  This is done for parallel correctness.
    *
-
-  /**
    * This is called before execute so you can reset any internal data.
    */
   virtual void initialSetup() override ;

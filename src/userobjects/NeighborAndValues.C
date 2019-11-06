@@ -71,7 +71,7 @@ void NeighborAndValues::execute()
       }
       else{
         // Real misori = Misori_neml(q1,q2);
-        Real misori = Misori(q1,q2);
+        Real misori = Misori_neml(q1,q2);
         it->second = misori;
       }
     }
@@ -95,53 +95,48 @@ NeighborAndValues::getMisorientationFromPair( std::tuple<unsigned int, unsigned 
     mooseError("getMisorientationFromPair: can't find the given element");
   }
 }
-Real
-NeighborAndValues::Misori(std::vector<Real> q1, std::vector<Real> q2) const
-{
-  std::vector<Real> result(4,0.0);
-  std::vector<Real> normresult(4,0.0);
-  std::vector<Real> conj_q2(4,0.0);
-  conj_q2[0] = q2[0];
-  conj_q2[1] = -q2[1];
-  conj_q2[2] = -q2[2];
-  conj_q2[3] = -q2[3];
-
-  result[1] =  q1[1] * conj_q2[0] + q1[2] * conj_q2[3] - q1[3] * conj_q2[2] + q1[0] * conj_q2[1];
-  result[2] = -q1[1] * conj_q2[3] + q1[2] * conj_q2[0] + q1[3] * conj_q2[1] + q1[0] * conj_q2[2];
-  result[3] =  q1[1] * conj_q2[2] - q1[2] * conj_q2[1] + q1[3] * conj_q2[0] + q1[0] * conj_q2[3];
-  result[0] = -q1[1] * conj_q2[1] - q1[2] * conj_q2[2] - q1[3] * conj_q2[3] + q1[0] * conj_q2[0];
-  Real r = std::sqrt(result[0]*result[0] +
-                     result[1]*result[1] +
-                     result[2]*result[2] +
-                     result[3]*result[3] );
-  // Convert into unit vector
-  if (r > 0){
-    normresult[0] = result[0] / r;
-    normresult[1] = result[1] / r;
-    normresult[2] = result[2] / r;
-    normresult[3] = result[3] / r;
-  }
-  else
-    normresult = result;
-
-  Real misori = abs(2.0 * acos (result[0]));   // misOrientation = 2*acos(qw)
-  return misori;
-}
-
 // Real
-// NeighborAndValues::Misori_neml(std::vector<Real> q1, std::vector<Real> q2) const
+// NeighborAndValues::Misori(std::vector<Real> q1, std::vector<Real> q2) const
 // {
-//   // Moose::out<<"+++++++++++++++++++++++\n";
-//   // Moose::out<< "INSIDE Misori_neml \n";
-//   Real axis[3];
-//   Real angle = 0.0;
-//   neml::Orientation Q1(q1);
-//   // Moose::out<<"q1[0] "<<q1[0]<<" and Q1.quat()[0] "<< Q1.quat()[0] << "\n";
-//   neml::Orientation Q2(q1);
-//   neml::SymmetryGroup cubic("432");  // cubic: 432
-//   neml::Orientation misori_n = cubic.misorientation(Q1,Q2);
-//   misori_n.to_axis_angle(axis, angle);
-//   // Moose::out<<"misorientation angle "<< angle<< "\n";
-//   // Moose::out<<"+++++++++++++++++++++++\n";
-//   return angle;
+//   std::vector<Real> result(4,0.0);
+//   std::vector<Real> normresult(4,0.0);
+//   std::vector<Real> conj_q2(4,0.0);
+//   conj_q2[0] = q2[0];
+//   conj_q2[1] = -q2[1];
+//   conj_q2[2] = -q2[2];
+//   conj_q2[3] = -q2[3];
+//
+//   result[1] =  q1[1] * conj_q2[0] + q1[2] * conj_q2[3] - q1[3] * conj_q2[2] + q1[0] * conj_q2[1];
+//   result[2] = -q1[1] * conj_q2[3] + q1[2] * conj_q2[0] + q1[3] * conj_q2[1] + q1[0] * conj_q2[2];
+//   result[3] =  q1[1] * conj_q2[2] - q1[2] * conj_q2[1] + q1[3] * conj_q2[0] + q1[0] * conj_q2[3];
+//   result[0] = -q1[1] * conj_q2[1] - q1[2] * conj_q2[2] - q1[3] * conj_q2[3] + q1[0] * conj_q2[0];
+//   Real r = std::sqrt(result[0]*result[0] +
+//                      result[1]*result[1] +
+//                      result[2]*result[2] +
+//                      result[3]*result[3] );
+//   // Convert into unit vector
+//   if (r > 0){
+//     normresult[0] = result[0] / r;
+//     normresult[1] = result[1] / r;
+//     normresult[2] = result[2] / r;
+//     normresult[3] = result[3] / r;
+//   }
+//   else
+//     normresult = result;
+//
+//   Real misori = abs(2.0 * acos (result[0]));   // misOrientation = 2*acos(qw)
+//   return misori;
 // }
+
+Real
+NeighborAndValues::Misori_neml(std::vector<Real> q1, std::vector<Real> q2) const
+{
+  Real axis[3];
+  Real angle = 0.0;
+  neml::Orientation Q1(q1);
+  neml::Orientation Q2(q1);
+  neml::SymmetryGroup cubic("4");  // cubic: 432
+  neml::Orientation misori_n = cubic.misorientation(Q1,Q2);
+  misori_n.to_axis_angle(axis, angle);
+  return angle;
+}

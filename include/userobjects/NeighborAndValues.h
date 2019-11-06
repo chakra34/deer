@@ -34,8 +34,8 @@ public:
   virtual void finalize() override {return; };
 
   Real getMisorientationFromPair( std::tuple<unsigned int, unsigned int>) const;
-  Real Misori(std::vector<Real> q1, std::vector<Real> q2) const;
-  // Real Misori_neml(std::vector<Real> q1, std::vector<Real> q2) const;
+  // Real Misori(std::vector<Real> q1, std::vector<Real> q2) const;
+  Real Misori_neml(std::vector<Real> q1, std::vector<Real> q2) const;
 
 protected:
   // Pointer to the mesh

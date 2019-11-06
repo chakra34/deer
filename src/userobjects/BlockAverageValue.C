@@ -78,12 +78,12 @@ BlockAverageValue::execute()
                _integral_values[id][2]*integral_value[2] + _integral_values[id][3]*integral_value[3] ;
 
   if (value > 0.0){
-    for (int k = 0; k < integral_value.size(); k++){
+    for (unsigned int k = 0; k < integral_value.size(); k++){
       _integral_values[id][k] += _current_elem_volume * integral_value[k];
     }
   }
   else{
-    for (int k = 0; k < integral_value.size(); k++){
+    for (unsigned int k = 0; k < integral_value.size(); k++){
       _integral_values[id][k] += _current_elem_volume * -integral_value[k];
     }
   }
@@ -121,11 +121,6 @@ BlockAverageValue::finalize()
     _average_values[id][1] = _integral_values[id][1] / _volume_values[id];
     _average_values[id][2] = _integral_values[id][2] / _volume_values[id];
     _average_values[id][3] = _integral_values[id][3] / _volume_values[id];
-
-    Moose::out<<"volume values "<<_volume_values[id]<<" for id "<<id<<"\n";
-    Moose::out<<"Average value "<<_average_values[id][0]<<" "<<
-     _average_values[id][1]<<" "<<_average_values[id][2]<<" "<<_average_values[id][3]<<"\n";
-
   }
 }
 
