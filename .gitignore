@@ -18,4 +18,4 @@ build
 *.lyx~
 *.csv
 *.previous_test_results.json
-include/base/DeerRevision.h
+include/base/*
