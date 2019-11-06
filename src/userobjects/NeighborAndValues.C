@@ -135,7 +135,7 @@ NeighborAndValues::Misori_neml(std::vector<Real> q1, std::vector<Real> q2) const
   Real angle = 0.0;
   neml::Orientation Q1(q1);
   neml::Orientation Q2(q1);
-  neml::SymmetryGroup cubic("4");  // cubic: 432
+  neml::SymmetryGroup cubic("432");  // cubic: 432
   neml::Orientation misori_n = cubic.misorientation(Q1,Q2);
   misori_n.to_axis_angle(axis, angle);
   return angle;

@@ -29,4 +29,5 @@ protected:
   virtual void computeQpProperties();
 
   const MaterialProperty<Real> & _GBEnergy;
+  Real _ref_gb_energy;
 };

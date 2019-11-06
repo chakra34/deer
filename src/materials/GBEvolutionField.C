@@ -16,12 +16,14 @@ InputParameters
 validParams<GBEvolutionField>()
 {
   InputParameters params = validParams<GBEvolutionBase>();
+  params.addParam<Real>("ref_gb_energy",0.608," Reference GB energy in J/m^2");
   return params;
 }
 
 GBEvolutionField::GBEvolutionField(const InputParameters & parameters)
   : GBEvolutionBase(parameters),
-  _GBEnergy(getMaterialPropertyByName<Real>("GB_Energy")) // in J/m^2
+  _GBEnergy(getMaterialPropertyByName<Real>("GB_Energy")), // in J/m^2
+  _ref_gb_energy(getParam<Real>("ref_gb_energy"))
 {
 }
 
@@ -32,7 +34,7 @@ GBEvolutionField::computeQpProperties()
   Real val;
   val = _GBEnergy[_qp];
   if(_GBEnergy[_qp] == 0.0){
-    val = 0.608;
+    val = _ref_gb_energy;
   }
   _sigma[_qp] = val * _JtoeV * (_length_scale * _length_scale);
 
