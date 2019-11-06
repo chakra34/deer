@@ -79,17 +79,11 @@ ComputeNEMLCPGrainGrowthOutput::stressUpdate(
      if (_t > 0.0){
        EulerAngles angles;
        unsigned int block_id = std::max(0,_current_elem->subdomain_id() - 1);
-       // Moose::out<<"In material value of _grain_id "<<_grain_id[_qp]<<"\n";
        std::vector<Real> current_ori = {0.0, 0.0, 0.0, 0.0};
        if (_grain_id[_qp] != block_id){
            unsigned int id = _grain_id[_qp] + 1;
            current_ori = _gets_avg_ori.getBlockAvgValue(id);
-           // Moose::out<<"Averaged received "<<current_ori[0]<<" "<<current_ori[1]<<" "<<current_ori[2]<<" "<<current_ori[3]<<"\n";
            neml:: Orientation e = neml::Orientation::Quaternion(current_ori);
-           // Moose::out<<"Averaged orientation "<<e.quat()[0]<<" "<<e.quat()[1]<<" "<<e.quat()[2]<<" "<<e.quat()[3]<<"\n";
-
-           // angles = _euler->getEulerAngles(_grain_id[_qp]); // changed orientation
-           // neml:: Orientation e = neml::Orientation::createEulerAngles(angles.phi1, angles.Phi, angles.phi2,"degrees");
 
            _cpmodel->set_active_orientation(&_hist[_qp].front(), e);
            _changed_grain[_qp] = 1.0;
@@ -102,7 +96,6 @@ ComputeNEMLCPGrainGrowthOutput::stressUpdate(
           }
           getCPOutput(h_np1); // passing the history for outputs
          }
-   // Moose::out<<"Comparing histories "<<*h_np1<<" hist qp"<<_history[_qp]<<" \n";
 }
 
 // Method to store CP output as material parameters
@@ -115,7 +108,12 @@ ComputeNEMLCPGrainGrowthOutput::getCPOutput(double * const h_np1){
        _orientation_q[_qp][i] = Q.quat()[i];   // assigning quaternion
      }
 // based on Kocks-Mecking strength = b*ksi*G*sqrt(_rho); Here as an example took G of steel 80GPa, ksi = 0.9, b=2.86A
-    // double strength = 0.0 ; //(double)_cpmodel->get_current_strength(h_np1);
-    unsigned int id = _current_elem->subdomain_id();
-   _dislocation_density[_qp] = _t*id*pow(10,6); //strength * strength / (2.86*pow(10,-10) * 0.9 * 80000.0);
+    std::vector<int> p = {1,1,0};
+    std::vector<int> q = {1,1,1};
+    list_systems cubic = {std::make_pair(p,q)};
+    neml::CubicLattice c(1.0, cubic);
+    double strength = _cpmodel->strength(h_np1,c,300.0);
+    // Moose::out<<"strength "<<_cpmodel->strength(h_np1,c,300.0);
+    // unsigned int id = _current_elem->subdomain_id();
+   _dislocation_density[_qp] =  strength * strength / (2.86*pow(10,-10) * 0.9 * 80000.0); //_t*id*pow(10,6);  //
 }

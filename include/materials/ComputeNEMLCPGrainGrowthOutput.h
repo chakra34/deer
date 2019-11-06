@@ -7,6 +7,8 @@
 
 class ComputeNEMLCPGrainGrowthOutput;
 
+typedef std::vector<std::pair<std::vector<int>,std::vector<int>>> list_systems;
+
 template <>
 InputParameters validParams<ComputeNEMLCPGrainGrowthOutput>();
 
