@@ -75,16 +75,18 @@ void PropertyElement::InitializeOnce() {
 
 void PropertyElement::MakeAverage()
 {
-  std::vector<Real> vector_integral_value(_orientation[0].size(),0.0);
+  _vector_integral_value.resize(_orientation[0].size());
 
   for (unsigned int i = 0; i < _orientation[0].size(); i++){
+    _vector_integral_value[i] = 0.0;
     for (_qp = 0; _qp < _qrule->n_points(); _qp++){
-      vector_integral_value[i] = vector_integral_value[i] + _JxW[_qp] * _coord[_qp] * _orientation[_qp][i]/_current_elem_volume;
+      _vector_integral_value[i] += _JxW[_qp] * _coord[_qp] * _orientation[_qp][i];
     }
+    _vector_integral_value[i] /= _current_elem_volume;
   }
   auto obj_ptr = _element_value.find(_current_elem->id());
   if (obj_ptr != _element_value.end()){
-    obj_ptr->second = vector_integral_value;
+    obj_ptr->second = _vector_integral_value;
   }
   else{
     mooseError("PropertyElement: can't find the given element");

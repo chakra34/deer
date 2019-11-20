@@ -56,6 +56,7 @@ protected:
   unsigned int number_of_neighbors;
   // mapping <element which is of data type dof_id_type, neighbor set
   // Set Storing the set of neighbors
+  std::vector<Real> _vector_integral_value;
   std::set<unsigned int> _set_of_neighbors;
   std::map<dof_id_type, std::set<unsigned int>> _map_elem_with_neighbors;
 };

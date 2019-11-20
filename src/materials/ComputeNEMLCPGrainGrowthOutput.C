@@ -108,11 +108,7 @@ ComputeNEMLCPGrainGrowthOutput::getCPOutput(double * const h_np1){
        _orientation_q[_qp][i] = Q.quat()[i];   // assigning quaternion
      }
 // based on Kocks-Mecking strength = b*ksi*G*sqrt(_rho); Here as an example took G of steel 80GPa, ksi = 0.9, b=2.86A
-    std::vector<int> p = {1,1,0};
-    std::vector<int> q = {1,1,1};
-    list_systems cubic = {std::make_pair(p,q)};
-    neml::CubicLattice c(1.0, cubic);
-    double strength = _cpmodel->strength(h_np1,c,300.0);
+    double strength = _cpmodel->strength(h_np1,300.0);
     // Moose::out<<"strength "<<_cpmodel->strength(h_np1,c,300.0);
     // unsigned int id = _current_elem->subdomain_id();
    _dislocation_density[_qp] =  strength * strength / (2.86*pow(10,-10) * 0.9 * 80000.0); //_t*id*pow(10,6);  //

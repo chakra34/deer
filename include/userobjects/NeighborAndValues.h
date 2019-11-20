@@ -31,11 +31,14 @@ public:
   /**
    * Called _once_ after execute has been called all all "objects".
    */
-  virtual void finalize() override {return; };
+  virtual void finalize() override;
 
   Real getMisorientationFromPair( std::tuple<unsigned int, unsigned int>) const;
-  // Real Misori(std::vector<Real> q1, std::vector<Real> q2) const;
-  Real Misori_neml(std::vector<Real> q1, std::vector<Real> q2) const;
+  Real Misori(const std::vector<Real> q1, const std::vector<Real> q2) const;
+  Real Misori_neml(const std::vector<Real> q1, const std::vector<Real> q2) const;
+  std::vector<Real> Misori_block_neml(const std::vector<neml::Orientation> Q1,
+                                      const std::vector<neml::Orientation> Q2) const;
+
 
 protected:
   // Pointer to the mesh
