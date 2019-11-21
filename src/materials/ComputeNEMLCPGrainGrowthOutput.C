@@ -78,10 +78,11 @@ ComputeNEMLCPGrainGrowthOutput::stressUpdate(
 
      if (_t > 0.0){
        EulerAngles angles;
-       unsigned int block_id = std::max(0,_current_elem->subdomain_id() - 1);
+       Real block_id;
+       block_id = std::max(0,_current_elem->subdomain_id() - 1);
        std::vector<Real> current_ori = {0.0, 0.0, 0.0, 0.0};
-       if (_grain_id[_qp] != block_id){
-           unsigned int id = _grain_id[_qp] + 1;
+       if ( std::abs( _grain_id[_qp] - block_id) > 1e-4) {
+           unsigned int id = ((unsigned int) _grain_id[_qp]) + 1;
            current_ori = _gets_avg_ori.getBlockAvgValue(id);
            neml:: Orientation e = neml::Orientation::Quaternion(current_ori);
 
