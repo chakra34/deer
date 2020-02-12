@@ -112,5 +112,5 @@ ComputeNEMLCPGrainGrowthOutput::getCPOutput(double * const h_np1){
     double strength = _cpmodel->strength(h_np1,300.0);
     // Moose::out<<"strength "<<_cpmodel->strength(h_np1,c,300.0);
     // unsigned int id = _current_elem->subdomain_id();
-   _dislocation_density[_qp] =  strength * strength / (2.86*pow(10,-10) * 0.9 * 80000.0); //_t*id*pow(10,6);  //
+   _dislocation_density[_qp] =  pow(strength  / (2.86*pow(10,-7) * 0.5 * 80000.0),2.0); //should be square based on formula _t*id*pow(10,6);  //
 }
