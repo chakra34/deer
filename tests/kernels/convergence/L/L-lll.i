@@ -47,31 +47,35 @@
 
 [BCs]
   [./left]
-     type = PresetBC
+     type = DirichletBC
+     preset = true
      variable = disp_x
      boundary = fix
      value = 0.0
   [../]
 
   [./bottom]
-    type = PresetBC
+    type = DirichletBC
+    preset = true
     variable = disp_y
     boundary = fix
     value = 0.0
   [../]
 
   [./back]
-    type = PresetBC
+    type = DirichletBC
+    preset = true
     variable = disp_z
     boundary = fix
     value = 0.0
   [../]
 
   [./front]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     variable = disp_z
     boundary = pull
     function = pfn
+    preset = true
   [../]
 []
 

@@ -35,16 +35,18 @@
 
 [BCs]
   [./leftx]
-    type = PresetBC
+    type = DirichletBC
+    preset = true
     boundary = right
     variable = disp_x
     value = 0.0
   [../]
   [./pull]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     boundary = left
     variable = disp_x
     function = pull
+    preset = true
   [../]
 []
 

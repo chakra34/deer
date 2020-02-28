@@ -61,40 +61,46 @@
 
 [BCs]
   [./leftx]
-    type = PresetBC
+    type = DirichletBC
+    preset = true
     boundary = left
     variable = disp_x
     value = 0.0
   [../]
   [./lefty]
-    type = PresetBC
+    type = DirichletBC
+    preset = true
     boundary = left
     variable = disp_y
     value = 0.0
   [../]
   [./leftz]
-    type = PresetBC
+    type = DirichletBC
+    preset = true
     boundary = left
     variable = disp_z
     value = 0.0
   [../]
   [./pull_x]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     boundary = right
     variable = disp_x
     function = pullx
+    preset = true
   [../]
   [./pull_y]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     boundary = top
     variable = disp_y
     function = pully
+    preset = true
   [../]
   [./pull_z]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     boundary = right
     variable = disp_z
     function = pullz
+    preset = true
   [../]
 []
 

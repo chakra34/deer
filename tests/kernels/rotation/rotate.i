@@ -107,38 +107,43 @@
 
 [BCs]
   [./fix]
-    type = PresetBC
+    type = DirichletBC
+    preset = true
     value = 0.0
     boundary = left
     variable = disp_x
   [../]
 
   [./front_y]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     boundary = front
     variable = disp_y
     function = move_y
+    preset = true
   [../]
 
   [./back_y]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     boundary = back
     variable = disp_y
     function = move_y
+    preset = true
   [../]
 
   [./front_z]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     boundary = front
     variable = disp_z
     function = move_z
+    preset = true
   [../]
 
   [./back_z]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     boundary = back
     variable = disp_z
     function = move_z
+    preset = true
   [../]
 
 []
