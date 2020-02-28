@@ -1,12 +1,6 @@
-#ifndef MAKE_SCALAR_FROMAUX_H
-#define MAKE_SCALAR_FROMAUX_H
+#pragma once
 
 #include "Material.h"
-
-class Make_scalar_fromAux;
-
-template <>
-InputParameters validParams<Make_scalar_fromAux>();
 
 /**
  * Declares a constant material property of type RankTwoTensor.
@@ -14,6 +8,7 @@ InputParameters validParams<Make_scalar_fromAux>();
 class Make_scalar_fromAux : public Material
 {
 public:
+  static InputParameters validParams();
   Make_scalar_fromAux(const InputParameters & parameters);
 
 protected:
@@ -21,5 +16,3 @@ protected:
   const VariableValue & _val;
   MaterialProperty<Real> & _prop;
 };
-
-#endif // MAKE_SCALAR_FROMAUX_H

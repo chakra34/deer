@@ -16,11 +16,8 @@
 
 registerMooseObject("DeerApp",PropertyElement);
 
-template <>
-InputParameters
-validParams<PropertyElement>()
-{
-  InputParameters params = validParams<ElementUserObject>();
+InputParameters PropertyElement::validParams() {
+  InputParameters params = ElementUserObject::validParams();
   params.addRequiredParam<MaterialPropertyName>("orientation_q",
           "The name of the material property (orientation)retrieve per element");
   return params;

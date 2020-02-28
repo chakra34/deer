@@ -11,11 +11,8 @@
 
 registerMooseObject("DeerApp", ComputePolycrystalDislocationDensity);
 
-template <>
-InputParameters
-validParams<ComputePolycrystalDislocationDensity>()
-{
-  InputParameters params = validParams<ComputeDislocationDensityBase>();
+InputParameters ComputePolycrystalDislocationDensity::validParams() {
+  InputParameters params = ComputeDislocationDensityBase::validParams();
   params.addClassDescription(
       "Compute an evolving dislocation_density coupled to a grain growth phase field model.");
   params.addRequiredParam<UserObjectName>(

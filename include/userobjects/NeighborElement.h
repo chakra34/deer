@@ -1,19 +1,13 @@
-#ifndef NEIGHBORELEMENT_H
-#define NEIGHBORELEMENT_H
+#pragma once
 
 // MOOSE includes
 #include "ElementUserObject.h"
 #include "MooseMesh.h"
 
-// Forward Declarations
-class NeighborElement;
-
-template <>
-InputParameters validParams<NeighborElement>();
-
 class NeighborElement : public ElementUserObject
 {
 public:
+  static InputParameters validParams();
   NeighborElement(const InputParameters & parameters);
   virtual ~NeighborElement();
   /**
@@ -48,5 +42,3 @@ protected:
   std::set<unsigned int> _set_of_neighbors;
   std::map<dof_id_type, std::set<unsigned int>> _map_elem_with_neighbors;
 };
-
-#endif //NEIGHBORELEMENT_H

@@ -12,17 +12,13 @@
 #include "GBEvolutionBase.h"
 
 // Forward Declarations
-class GBEvolutionField;
-
-template <>
-InputParameters validParams<GBEvolutionField>();
-
 /**
  * Grain boundary energy parameters for isotropic uniform grain boundary energies
  */
 class GBEvolutionField : public GBEvolutionBase
 {
 public:
+  static InputParameters validParams();
   GBEvolutionField(const InputParameters & parameters);
 
 protected:

@@ -2,11 +2,8 @@
 
 registerMooseObject("DeerApp", ComputeNEMLStressInitHist);
 
-template <>
-InputParameters
-validParams<ComputeNEMLStressInitHist>()
-{
-  InputParameters params = validParams<ComputeNEMLStress>();
+InputParameters ComputeNEMLStressInitHist::validParams() {
+  InputParameters params = ComputeNEMLStress::validParams();
   params.addParam<Real>("init_hist",0.0," initial history value");
   return params;
 }

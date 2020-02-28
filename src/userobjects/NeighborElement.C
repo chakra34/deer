@@ -8,11 +8,8 @@
 
 registerMooseObject("DeerApp",NeighborElement);
 
-template <>
-InputParameters
-validParams<NeighborElement>()
-{
-  InputParameters params = validParams<ElementUserObject>();
+InputParameters NeighborElement::validParams() {
+  InputParameters params = ElementUserObject::validParams();
   params.addParam<unsigned int>("number_of_neighbors",1,"Number of neighbor elments");
   return params;
 }

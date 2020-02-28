@@ -9,11 +9,8 @@
 
 registerMooseObject("DeerApp",NeighborAndValues);
 
-template <>
-InputParameters
-validParams<NeighborAndValues>()
-{
-  InputParameters params = validParams<PropertyElement>();
+InputParameters NeighborAndValues::validParams() {
+  InputParameters params = PropertyElement::validParams();
   return params;
 }
 

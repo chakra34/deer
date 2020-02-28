@@ -5,12 +5,8 @@
 
 registerMooseObject("DeerApp",ComputeNonLocalPropertyMaterial);
 
-template <>
-InputParameters
-validParams<ComputeNonLocalPropertyMaterial>()
-{
-  InputParameters params = validParams<Material>();
-
+InputParameters ComputeNonLocalPropertyMaterial::validParams() {
+  InputParameters params = Material::validParams();
   params.addParam<UserObjectName>(
       "gets_misorientation",
       "The name of the UserObject that is going to find the "

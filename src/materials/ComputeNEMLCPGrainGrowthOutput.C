@@ -2,11 +2,8 @@
 
 registerMooseObject("DeerApp", ComputeNEMLCPGrainGrowthOutput);
 
-template <>
-InputParameters
-validParams<ComputeNEMLCPGrainGrowthOutput>()
-{
-  InputParameters params = validParams<ComputeNEMLStressUpdate>();
+InputParameters ComputeNEMLCPGrainGrowthOutput::validParams() {
+  InputParameters params = ComputeNEMLStressUpdate::validParams();
   params.addParam<UserObjectName>("euler_angle_provider","dummy"
                                         "Name of Euelr angle provider user object");
   params.addRequiredCoupledVar("unique_grains", "unique grains");

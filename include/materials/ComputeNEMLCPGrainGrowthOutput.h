@@ -1,20 +1,16 @@
-#ifndef ComputeNEMLCPGrainGrowthOutput_H
-#define ComputeNEMLCPGrainGrowthOutput_H
+#pragma once
 
 #include "ComputeNEMLStressUpdate.h"
 #include "Material.h"
 #include "BlockAverageValue.h"
-
-class ComputeNEMLCPGrainGrowthOutput;
+#include "EulerAngleProvider.h"
 
 typedef std::vector<std::pair<std::vector<int>,std::vector<int>>> list_systems;
-
-template <>
-InputParameters validParams<ComputeNEMLCPGrainGrowthOutput>();
 
 class ComputeNEMLCPGrainGrowthOutput: public ComputeNEMLStressUpdate
 {
  public:
+  static InputParameters validParams();
   ComputeNEMLCPGrainGrowthOutput(const InputParameters & parameters);
   virtual ~ComputeNEMLCPGrainGrowthOutput() {};
 
@@ -47,6 +43,3 @@ class ComputeNEMLCPGrainGrowthOutput: public ComputeNEMLStressUpdate
 
    void getCPOutput(double *const h_np1);
 };
-
-
-#endif // ComputeNEMLCPGrainGrowthOutput_H

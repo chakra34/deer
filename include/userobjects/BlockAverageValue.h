@@ -1,5 +1,4 @@
-#ifndef BLOCKAVERAGEVALUE_H
-#define BLOCKAVERAGEVALUE_H
+#pragma once
 
 // #include "ElementUserObject.h"
 #include "MooseMesh.h"
@@ -7,18 +6,13 @@
 #include "PropertyElement.h"
 #include "libmesh/mesh_tools.h"
 
-// Forward Declarations
-class BlockAverageValue;
-
-template <>
-InputParameters validParams<BlockAverageValue>();
-
 /**
  * Computes the average value of a variable on each block
  */
 class BlockAverageValue : public PropertyElement
 {
 public:
+  static InputParameters validParams();
   BlockAverageValue(const InputParameters & parameters);
   virtual ~BlockAverageValue();
 
@@ -65,5 +59,3 @@ protected:
   // This map will hold our averages for each block
   std::map<unsigned int, std::vector<Real>> _average_values;
 };
-
-#endif //BLOCKAVERAGEVALUE_H

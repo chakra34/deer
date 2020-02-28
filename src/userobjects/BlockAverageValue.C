@@ -14,11 +14,8 @@
 
 registerMooseObject("DeerApp", BlockAverageValue);
 
-template <>
-InputParameters
-validParams<BlockAverageValue>()
-{
-  InputParameters params = validParams<PropertyElement>();
+InputParameters BlockAverageValue::validParams() {
+  InputParameters params = PropertyElement::validParams();
   params.addRequiredParam<MaterialPropertyName>("unique_grains",
           "unique grains material property");  // have to pass as a material
   return params;

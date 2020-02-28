@@ -13,10 +13,7 @@
 
 registerMooseObject("DeerApp", ACGrGrDislocationDrivingForce);
 
-template <>
-InputParameters
-validParams<ACGrGrDislocationDrivingForce>()
-{
+InputParameters ACGrGrDislocationDrivingForce::validParams() {
   InputParameters params = ACBulk<Real>::validParams();
   params.addClassDescription("Adds dislocation energy contribution to the Allen-Cahn equation");
   params.addRequiredParam<MaterialPropertyName>(

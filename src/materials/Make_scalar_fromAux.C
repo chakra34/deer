@@ -2,11 +2,8 @@
 
 registerMooseObject("DeerApp", Make_scalar_fromAux);
 
-template <>
-InputParameters
-validParams<Make_scalar_fromAux>()
-{
-  InputParameters params = validParams<Material>();
+InputParameters Make_scalar_fromAux::validParams() {
+  InputParameters params = Material::validParams();
   params.addRequiredCoupledVar("val", "scalar variable");
   params.addRequiredParam<MaterialPropertyName>(
       "scalar_name", "Name of the scalar material property to be created");

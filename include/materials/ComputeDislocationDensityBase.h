@@ -1,12 +1,3 @@
-//* This file is part of the MOOSE framework
-//* https://www.mooseframework.org
-//*
-//* All rights reserved, see COPYRIGHT for full restrictions
-//* https://github.com/idaholab/moose/blob/master/COPYRIGHT
-//*
-//* Licensed under LGPL 2.1, please see LICENSE for details
-//* https://www.gnu.org/licenses/lgpl-2.1.html
-
 #pragma once
 
 #include "DerivativeMaterialInterface.h"
@@ -14,18 +5,11 @@
 #include "RankFourTensor.h"
 #include "GuaranteeProvider.h"
 
-class ComputeDislocationDensityBase;
-
-template <>
-InputParameters validParams<ComputeDislocationDensityBase>();
-
-/**
- * ComputeElasticityTensorBase the base class for computing elasticity tensors
- */
 class ComputeDislocationDensityBase : public DerivativeMaterialInterface<Material>,
                                     public GuaranteeProvider
 {
 public:
+  static InputParameters validParams();
   ComputeDislocationDensityBase(const InputParameters & parameters);
 
 protected:

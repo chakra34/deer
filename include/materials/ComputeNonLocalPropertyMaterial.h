@@ -1,20 +1,12 @@
-#ifndef COMPUTENONLOCALPROPERTYMATERIAL_H
-#define COMPUTENONLOCALPROPERTYMATERIAL_H
-
+#pragma once
 // MOOSE includes
 #include "Material.h"
-// #include "PropertyElement.h"
-// #include "NeighborElement.h"
 #include "NeighborAndValues.h"
 // Forward Declarations
-class ComputeNonLocalPropertyMaterial;
-
-template <>
-InputParameters validParams<ComputeNonLocalPropertyMaterial>();
-
 class ComputeNonLocalPropertyMaterial : public Material
 {
 public:
+  static InputParameters validParams();
   ComputeNonLocalPropertyMaterial(const InputParameters & parameters);
 
 protected:
@@ -28,5 +20,3 @@ private:
    Real _ref_gb_energy;
 
 };
-
-#endif //COMPUTENONLOCALPROPERTYMATERIAL_H

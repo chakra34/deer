@@ -1,15 +1,11 @@
 #pragma once
 
-#include "ComputeNEMLStressInitHist.h"
-
-class ComputeNEMLStressInitHist;
-
-template <>
-InputParameters validParams<ComputeNEMLStressInitHist>();
+#include "ComputeNEMLStress.h"
 
 class ComputeNEMLStressInitHist: public ComputeNEMLStress
 {
  public:
+   static InputParameters validParams();
   ComputeNEMLStressInitHist(const InputParameters & parameters);
 
  protected:

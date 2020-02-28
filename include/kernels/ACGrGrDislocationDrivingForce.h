@@ -12,10 +12,6 @@
 #include "ACBulk.h"
 
 // Forward Declarations
-class ACGrGrDislocationDrivingForce;
-
-template <>
-InputParameters validParams<ACGrGrDislocationDrivingForce>();
 
 /**
  * Calculates the porton of the Allen-Cahn equation that results from the deformation energy.
@@ -25,6 +21,7 @@ InputParameters validParams<ACGrGrDislocationDrivingForce>();
 class ACGrGrDislocationDrivingForce : public ACBulk<Real>
 {
 public:
+  static InputParameters validParams();
   ACGrGrDislocationDrivingForce(const InputParameters & parameters);
 
 protected:

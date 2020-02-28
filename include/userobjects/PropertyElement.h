@@ -1,5 +1,4 @@
-#ifndef PROPERTYELEMENT_H
-#define PROPERTYELEMENT_H
+#pragma once
 
 // MOOSE includes
 //#include "ElementIntegralUserObject.h"
@@ -8,14 +7,10 @@
 #include "Material.h"
 
 // Forward Declarations
-class PropertyElement;
-
-template <>
-InputParameters validParams<PropertyElement>();
-
 class PropertyElement : public ElementUserObject
 {
 public:
+  static InputParameters validParams();
   PropertyElement(const InputParameters & parameters);
   virtual ~PropertyElement();
   /**
@@ -60,5 +55,3 @@ protected:
   std::set<unsigned int> _set_of_neighbors;
   std::map<dof_id_type, std::set<unsigned int>> _map_elem_with_neighbors;
 };
-
-#endif //PROPERTYELEMENT_H

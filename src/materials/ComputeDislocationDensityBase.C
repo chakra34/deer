@@ -10,11 +10,8 @@
 #include "ComputeDislocationDensityBase.h"
 #include "Function.h"
 
-template <>
-InputParameters
-validParams<ComputeDislocationDensityBase>()
-{
-  InputParameters params = validParams<Material>();
+InputParameters ComputeDislocationDensityBase::validParams() {
+  InputParameters params = Material::validParams();
   params.addParam<std::string>("base_name",
                                "Optional parameter that allows the user to define "
                                "multiple mechanics material systems on the same "

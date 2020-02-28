@@ -1,5 +1,4 @@
-#ifndef NEIGHBORANDVALUES_H
-#define NEIGHBORANDVALUES_H
+#pragma once
 
 // MOOSE includes
 #include "PropertyElement.h"
@@ -7,15 +6,10 @@
 #include "Material.h"
 #include "neml_interface.h"
 
-// Forward Declarations
-class NeighborAndValues;
-
-template <>
-InputParameters validParams<NeighborAndValues>();
-
 class NeighborAndValues : public PropertyElement
 {
 public:
+  static InputParameters validParams();
   NeighborAndValues(const InputParameters & parameters);
 
   virtual ~NeighborAndValues();
@@ -49,5 +43,3 @@ protected:
 
 
 };
-
-#endif //NEIGHBORANDVALUES_H
