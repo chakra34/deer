@@ -45,7 +45,6 @@ void PropertyElement::execute()
 
 void PropertyElement::InitializeOnce() {
   // Clear map values
-  if (_n == 1){  // Doing this thing only once
   _map_elem_with_neighbors.clear();
     _element_value.clear();
 
@@ -66,8 +65,6 @@ void PropertyElement::InitializeOnce() {
       }
       _map_elem_with_neighbors[elem->id()] = _set_of_neighbors;  // includes me
     }
-       _n += 1;
-  }
 }
 
 void PropertyElement::MakeAverage()

@@ -21,6 +21,7 @@ ComputeNEMLCPGrainGrowthOutput::ComputeNEMLCPGrainGrowthOutput(const InputParame
     _dislocation_density(declareProperty<Real>("dislocation_density")),
     _euler(parameters.isParamSetByUser("euler_angle_provider") ? &getUserObject<EulerAngleProvider>("euler_angle_provider") : nullptr), // May be making it a required parameter
     _grain_id(coupledValue("unique_grains")),
+    _grain_id_old(coupledValueOld("unique_grains")),
     _gets_avg_ori(getUserObject<BlockAverageValue>("get_avg_orientation")),
     _changed_grain(declareProperty<Real>("changed_grain")),
     _history(declareProperty<Real>("history"))
@@ -75,12 +76,12 @@ ComputeNEMLCPGrainGrowthOutput::stressUpdate(
 
      if (_t > 0.0){
        EulerAngles angles;
-       Real block_id;
-       block_id = std::max(0,_current_elem->subdomain_id() - 1);
+       // Real block_id;
+       // block_id = std::max(0,_current_elem->subdomain_id() - 1);
        std::vector<Real> current_ori = {0.0, 0.0, 0.0, 0.0};
-       if ( std::abs( _grain_id[_qp] - block_id) > 1e-4) {
-           unsigned int id = ((unsigned int) _grain_id[_qp]) + 1;
-           current_ori = _gets_avg_ori.getBlockAvgValue(id);
+       if ( std::round(_grain_id[_qp]) != std::round(_grain_id_old[_qp]) ) {
+           unsigned int id = (unsigned int) std::round(_grain_id[_qp]) + 1;
+           current_ori = _gets_avg_ori.getBlockAvgValue(id); // change the map format
            neml:: Orientation e = neml::Orientation::Quaternion(current_ori);
 
            _cpmodel->set_active_orientation(&_hist[_qp].front(), e);

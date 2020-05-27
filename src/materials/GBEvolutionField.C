@@ -11,11 +11,20 @@
 
 registerMooseObject("DeerApp", GBEvolutionField);
 
-InputParameters GBEvolutionField::validParams() {
-  InputParameters params = GBEvolutionBase::validParams();
+template <>
+InputParameters
+validParams<GBEvolutionField>()
+{
+  InputParameters params = validParams<GBEvolutionBase>();
   params.addParam<Real>("ref_gb_energy",0.608," Reference GB energy in J/m^2");
   return params;
 }
+
+// InputParameters GBEvolutionField::validParams() {
+//   InputParameters params = GBEvolutionBase::validParams();
+//   params.addParam<Real>("ref_gb_energy",0.608," Reference GB energy in J/m^2");
+//   return params;
+// }
 
 GBEvolutionField::GBEvolutionField(const InputParameters & parameters)
   : GBEvolutionBase(parameters),

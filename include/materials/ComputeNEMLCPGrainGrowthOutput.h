@@ -22,7 +22,8 @@ class ComputeNEMLCPGrainGrowthOutput: public ComputeNEMLStressUpdate
    /// object providing the Euler angles
    const EulerAngleProvider * _euler;
    /// grain id
-  const VariableValue & _grain_id;
+   const VariableValue & _grain_id;
+   const VariableValue & _grain_id_old;
    // const MaterialProperty<Real> & _grain_id;
    const BlockAverageValue & _gets_avg_ori;
 

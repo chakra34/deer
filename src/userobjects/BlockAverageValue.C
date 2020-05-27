@@ -32,19 +32,23 @@ BlockAverageValue::~BlockAverageValue() {}
 void
 BlockAverageValue::initialSetup()
 {
+  Moose::out<<"Block Average value I am in initial set up "<<"\n";
   // Explicitly call the initialization routines for our base class
   InitializeOnce();
+  initialize();
 }
 
 void
 BlockAverageValue::initialize()
 {
 
+  // Moose::out<<"Block Average value I am in initialize "<<"\n";
   // Set averages to 0 for each block at each time
   const std::set<SubdomainID> & blocks = _subproblem.mesh().meshSubdomains();
 
   for (std::set<SubdomainID>::const_iterator it = blocks.begin(); it != blocks.end(); ++it)
   {
+     // Moose::out<<" $$$$$$$ block iterator is "<<*it<<"\n";
     _integral_values[*it] = {0.0, 0.0, 0.0, 0.0};
     _volume_values[*it]   = 0;
     _average_values[*it]  = {0.0, 0.0, 0.0, 1.0};
@@ -54,6 +58,7 @@ BlockAverageValue::initialize()
 void
 BlockAverageValue::execute()
 {
+
   // Compute the integral on this element
   MakeAverage();
 
@@ -148,6 +153,7 @@ BlockAverageValue::getBlockAvgValue( unsigned int grain_id) const
     }
   }
   else{
+    // Moose::out<<" current time "<<_t<<" grain_id "<<grain_id<<"\n";
     mooseError("BlockAverageValue: can't find the given grain");
   }
 }
